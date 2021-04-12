@@ -12,7 +12,7 @@ import java.util.List;
 public class ExcelGenerator {
     public static ByteArrayInputStream dataToExcel(List<ToDo> toDoList) throws IOException {
 
-        String columns[] = {"ToDo Name", "Description"};
+        String columns[] = {"ToDo Name", "Description", "Date"};
         try(Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream();) {
             CreationHelper creationHelper = workbook.getCreationHelper();
             Sheet sheet = workbook.createSheet("Report1");
@@ -39,6 +39,7 @@ public class ExcelGenerator {
                 Row row = sheet.createRow(rowInx++);
                 row.createCell(0).setCellValue(toDo.getName());
                 row.createCell(1).setCellValue(toDo.getDescripton());
+                row.createCell(2).setCellValue(toDo.getDate().toString());
             }
 
             workbook.write(out);

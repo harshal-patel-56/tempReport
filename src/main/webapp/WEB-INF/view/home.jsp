@@ -85,6 +85,11 @@
 
 <script>
 
+
+    const date = new Date();
+    date.setDate(date.getDate() + 1);
+    document.getElementById("report1DatePicker").setAttribute("max", date.toISOString().substring(0,10));
+
     function renderComponent() {
         var dd = document.getElementById("reportType").value;
         if (dd === "1") {

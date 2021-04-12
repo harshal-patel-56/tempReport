@@ -16,6 +16,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -33,17 +35,18 @@ public class IndexController {
     }
 
     @PostMapping("/")
-    public ModelAndView postHome(
+    public ResponseEntity<InputStreamResource> postHome(
             @RequestParam("reportType") String reportType,
             @RequestParam("report1DatePicker") String report1DatePicker,
             @RequestParam("report2StartDate") String report2StartDate,
             @RequestParam("report2EndDate") String report2EndDate,
             @RequestParam("report3StartNumber") String report3StartNumber,
             @RequestParam("report3EndNumber") String report3EndNumber
-    ) {
+    ) throws IOException, ParseException {
         log.info(reportType);
         if (reportType.equals("1")) {
             log.info(report1DatePicker);
+            return downloadReport(report1DatePicker);
         } else if (reportType.equals("2")) {
             log.info("Report2StartDate : {} Report2EndDate : {}", report2StartDate, report2EndDate);
         } else if (reportType.equals("3")) {
@@ -51,12 +54,15 @@ public class IndexController {
         } else {
             log.info("INVALID DATA");
         }
-        return new ModelAndView("download");
+        return ResponseEntity.badRequest().build();
     }
 
-    @GetMapping(value = "/download/rep1.xlsx")
-    public ResponseEntity<InputStreamResource> downloadReport() throws IOException {
-        List<ToDo> todos = toDoRepo.getAllTodos();
+
+    public ResponseEntity<InputStreamResource> downloadReport(String dateString) throws IOException, ParseException {
+
+        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateString + " 23:59:59");
+        log.info("From downloadReport : {}", date.toString());
+        List<ToDo> todos = toDoRepo.getReport1(date);
         ByteArrayInputStream in = ExcelGenerator.dataToExcel(todos);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=rep1.xlsx");
