@@ -1,15 +1,20 @@
 package com.harshal.tempReport.controller;
 
+import com.harshal.tempReport.model.ToDo;
 import com.harshal.tempReport.repository.ToDoRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.ByteArrayInputStream;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -44,5 +49,12 @@ public class IndexController {
             log.info("INVALID DATA");
         }
         return new ModelAndView("home");
+    }
+
+    @GetMapping(value = "/download/rep1.xlsx")
+    public ResponseEntity<InputStreamResource> downloadReport() {
+        List<ToDo> todos = toDoRepo.getAllTodos();
+
+        return null;
     }
 }
