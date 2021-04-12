@@ -2,9 +2,11 @@ package com.harshal.tempReport.controller;
 
 import com.harshal.tempReport.model.ToDo;
 import com.harshal.tempReport.repository.ToDoRepo;
+import com.harshal.tempReport.utility.ExcelGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -48,13 +51,16 @@ public class IndexController {
         } else {
             log.info("INVALID DATA");
         }
-        return new ModelAndView("home");
+        return new ModelAndView("download");
     }
 
     @GetMapping(value = "/download/rep1.xlsx")
-    public ResponseEntity<InputStreamResource> downloadReport() {
+    public ResponseEntity<InputStreamResource> downloadReport() throws IOException {
         List<ToDo> todos = toDoRepo.getAllTodos();
+        ByteArrayInputStream in = ExcelGenerator.dataToExcel(todos);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=rep1.xlsx");
 
-        return null;
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(in));
     }
 }

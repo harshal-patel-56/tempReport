@@ -36,8 +36,13 @@ public class ExcelGenerator {
 
             int rowInx = 1;
             for (ToDo toDo : toDoList) {
-
+                Row row = sheet.createRow(rowInx++);
+                row.createCell(0).setCellValue(toDo.getName());
+                row.createCell(1).setCellValue(toDo.getDescripton());
             }
+
+            workbook.write(out);
+            return new ByteArrayInputStream(out.toByteArray());
         }
     }
 }
